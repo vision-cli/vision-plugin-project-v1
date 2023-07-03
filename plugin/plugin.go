@@ -11,13 +11,17 @@ import (
 	"github.com/vision-cli/vision-plugin-project-v1/run"
 )
 
+const (
+	create = "create"
+)
+
 var Usage = api_v1.PluginUsageResponse{
 	Version:        "0.1.0",
 	Use:            "project",
-	Short:          "manage project",
-	Long:           "manage project using a standard template",
-	Example:        "vision project create myProject",
-	Subcommands:    []string{"create"},
+	Short:          "manage projects",
+	Long:           "manage projects and docs using a standard template",
+	Example:        "vision project create myProject  -r github.com/mycompany",
+	Subcommands:    []string{create},
 	Flags:          []api_v1.PluginFlag{},
 	RequiresConfig: false,
 }
@@ -48,7 +52,7 @@ func Handle(input string, e execute.Executor, t tmpl.TmplWriter) string {
 			return errorResponse(errors.New("missing cli command"))
 		}
 		switch req.Args[placeholders.ArgsCommandIndex] {
-		case "create":
+		case create:
 			if len(req.Args) <= 1 ||
 				req.Args[placeholders.ArgsNameIndex] == "" {
 				return errorResponse(errors.New("missing project name"))

@@ -1,19 +1,22 @@
 package plugin_test
 
 import (
+	"io/fs"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/vision-cli/common/file"
 	"github.com/vision-cli/common/mocks"
 	"github.com/vision-cli/vision-plugin-project-v1/plugin"
+	"github.com/vision-cli/vision-plugin-project-v1/run"
 )
 
 func TestHandle_WithValidUsageInput_ReturnsUsageResponseString(t *testing.T) {
 	e := mocks.NewMockExecutor()
 	tw := mocks.NewMockTmplWriter()
 	result := plugin.Handle(CreateRequest(t, "usage"), &e, &tw)
-	expected := `{"Version":"0.1.0","Use":"project","Short":"manage project","Long":"manage project using a standard template","Example":"vision project create myProject","Subcommands":["create"],"Flags":[],"RequiresConfig":false}`
+	expected := `{"Version":"0.1.0","Use":"project","Short":"manage projects","Long":"manage projects and docs using a standard template","Example":"vision project create myProject  -r github.com/mycompany","Subcommands":["create"],"Flags":[],"RequiresConfig":false}`
 	assert.Equal(t, expected, result)
 }
 
@@ -43,6 +46,22 @@ func TestHandle_WithInValidCommand_ReturnsErrorString(t *testing.T) {
 }
 
 func TestHandle_WithValidRunInput_ReturnsRunResponseString(t *testing.T) {
+	oldtolines := file.ToLines
+	defer func() { file.ToLines = oldtolines }()
+	file.ToLines = func(path string) ([]string, error) {
+		return []string{"# Docs"}, nil
+	}
+	oldfromlines := file.FromLines
+	defer func() { file.FromLines = oldfromlines }()
+	file.FromLines = func(path string, lines []string) error {
+		return nil
+	}
+	oldfswalkdir := run.Fswalkdir
+	defer func() { run.Fswalkdir = oldfswalkdir }()
+	run.Fswalkdir = func(fsys fs.FS, root string, fn fs.WalkDirFunc) error {
+		return nil
+	}
+
 	e := mocks.NewMockExecutor()
 	tw := mocks.NewMockTmplWriter()
 	req := CreateRequest(t, "run")

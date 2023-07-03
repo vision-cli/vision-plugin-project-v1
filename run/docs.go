@@ -32,6 +32,8 @@ const (
 //go:embed all:_templates/docs
 var docFiles embed.FS
 
+var Fswalkdir = fs.WalkDir
+
 // Generates a table of contents for ./docs/<topic>/README.md files
 // and a list of all services in a jarvis project.
 // TargetDir should be a jarvis project root directory.
@@ -134,7 +136,7 @@ func fsTableRows(dirPath string, subDirs int, linkPrefix string) ([]string, erro
 	rows := []string{}
 	directories := make([]string, subDirs)
 
-	err := fs.WalkDir(os.DirFS(dirPath), ".",
+	err := Fswalkdir(os.DirFS(dirPath), ".",
 		func(path string, d fs.DirEntry, err error) error {
 			if errors.Is(err, fs.ErrPermission) {
 				return fs.SkipDir
