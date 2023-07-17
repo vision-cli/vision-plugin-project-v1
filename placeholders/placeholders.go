@@ -14,7 +14,7 @@ const (
 	// include any other arg indexes here
 )
 
-var nonAlphaRegex = regexp.MustCompile(`[^a-zA-Z]+`)
+var allowedRegex = regexp.MustCompile(`[^a-zA-Z\-\_]+`)
 
 func SetupPlaceholders(req api_v1.PluginRequest) (*api_v1.PluginPlaceholders, error) {
 	var err error
@@ -22,7 +22,7 @@ func SetupPlaceholders(req api_v1.PluginRequest) (*api_v1.PluginPlaceholders, er
 	if err != nil {
 		return nil, err
 	}
-	projectName := clearString(req.Args[ArgsNameIndex])
+	projectName := clearName(req.Args[ArgsNameIndex])
 	p.(*api_v1.PluginPlaceholders).ProjectRoot = projectName
 	p.(*api_v1.PluginPlaceholders).ProjectName = projectName
 	p.(*api_v1.PluginPlaceholders).ProjectDirectory = projectName
@@ -37,6 +37,6 @@ func SetupPlaceholders(req api_v1.PluginRequest) (*api_v1.PluginPlaceholders, er
 	return p.(*api_v1.PluginPlaceholders), nil
 }
 
-func clearString(str string) string {
-	return nonAlphaRegex.ReplaceAllString(str, "")
+func clearName(str string) string {
+	return allowedRegex.ReplaceAllString(str, "")
 }
