@@ -82,7 +82,7 @@ func initGit(targetDir, branch string, executor execute.Executor) error {
 func createConfig(p *api_v1.PluginPlaceholders, executor execute.Executor) error {
 	action := "creating default config"
 
-	gitInitCmd := exec.Command("vision", "config", "create", "--silent", "-r", p.Remote)
+	gitInitCmd := exec.Command("vision", "config", "create", "--silent", "-r", p.Remote, "-g", p.Registry)
 	err := executor.Errors(gitInitCmd, p.ProjectDirectory, action)
 	if err != nil {
 		return err // error wrapped with action string
