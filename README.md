@@ -7,7 +7,7 @@ Vision plugins require golang (https://go.dev) to be installed
 Install the plugin with
 
 ```
-go install github.com/vision-cli/github.com/vision-cli/vision-plugin-project-v1
+go install github.com/vision-cli/vision-plugin-project-v1
 ```
 
 You will now see the project plugin commands on the vision cli
